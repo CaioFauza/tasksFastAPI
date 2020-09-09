@@ -10,7 +10,11 @@ tags_metadata = [
 
 app = FastAPI(title="Tasks API", description="API built for Insper Megadados discipline, 2020.2",
               version="1.0", openapi_tags=tags_metadata)
-tasks = list()
+tasks = [
+    {"description": "buy some cats", "status": "finished"},
+    {"description": "create new tasks", "status": "started"},
+    {"description": "megadados homework", "status": "started"},
+]
 
 
 class Task(BaseModel):
@@ -29,10 +33,14 @@ async def create_task(task: Task):
 
 @app.delete("/api/v1/tasks/delete", tags=["TaskController"], response_model=Task)
 async def delete_task(task: Task):
-    for task in tasks:
-        if task["description"] == task.description:
-            tasks.remove(
-                {"description": task.description, "status": task.status})
-        else:
-            raise HTTPException(status_code=404, detail="Item not found")
-    return {"status": "Success", "message": "Task removed successfully!"}
+    model = {"description": task.description, "status": task.status}
+    if model in tasks:
+        tasks.remove(model)
+    else:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return task
+
+
+@app.put("/api/v1/tasks/update", tags=["TaskController"], response_model=Task)
+async def update_task_description(task: Task):
+    return task.description
