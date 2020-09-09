@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 tags_metadata = [
@@ -18,7 +18,7 @@ class Task(BaseModel):
     status: str
 
 
-@app.post("/api/v1/tasks/create", tags=["TaskController"])
+@app.post("/api/v1/tasks/create", tags=["TaskController"], response_model=Task)
 async def create_task(task: Task):
     new_task = dict()
     new_task["description"] = task.description
@@ -27,10 +27,12 @@ async def create_task(task: Task):
     return {"status": "Success", "message": "Task created successfully!"}
 
 
-@app.delete("/api/v1/tasks/delete", tags=["TaskController"])
+@app.delete("/api/v1/tasks/delete", tags=["TaskController"], response_model=Task)
 async def delete_task(task: Task):
     for task in tasks:
         if task["description"] == task.description:
             tasks.remove(
                 {"description": task.description, "status": task.status})
+        else:
+            raise HTTPException(status_code=404, detail="Item not found")
     return {"status": "Success", "message": "Task removed successfully!"}
