@@ -8,8 +8,10 @@ tags_metadata = [
     }
 ]
 
-app = FastAPI(title="Tasks API", description="API built for Insper Megadados discipline, 2020.2", version="1.0", openapi_tags=tags_metadata);
-tasks = list();
+app = FastAPI(title="Tasks API", description="API built for Insper Megadados discipline, 2020.2",
+              version="1.0", openapi_tags=tags_metadata)
+tasks = list()
+
 
 class Task(BaseModel):
     description: str
