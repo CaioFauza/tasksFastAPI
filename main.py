@@ -25,3 +25,12 @@ async def create_task(task: Task):
     new_task["status"] = task.status
     tasks.append(new_task)
     return {"status": "Success", "message": "Task created successfully!"}
+
+
+@app.delete("/api/v1/tasks/delete", tags=["TaskController"])
+async def delete_task(task: Task):
+    for task in tasks:
+        if task["description"] == task.description:
+            tasks.remove(
+                {"description": task.description, "status": task.status})
+    return {"status": "Success", "message": "Task removed successfully!"}
