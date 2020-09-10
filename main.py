@@ -45,6 +45,17 @@ class DeleteTaskResponse(BaseModel):
     message: str
 
 
+class ListTasksResponse(BaseModel):
+    status: str
+    message: str
+    tasks: list
+
+
+@app.get("/api/v1/tasks/", tags=["TaskController"], response_model=ListTasksResponse)
+async def list_tasks():
+    return {"status": "Success", "message": "Tasks listed successfully!", "tasks": tasks}
+
+
 @app.post("/api/v1/tasks/create", tags=["TaskController"], response_model=CreateTaskResponse)
 async def create_task(task: Task):
     global taskId
