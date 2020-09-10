@@ -40,6 +40,11 @@ class UpdateTaskDescriptionResponse(BaseModel):
     message: str
 
 
+class DeleteTaskResponse(BaseModel):
+    status: str
+    message: str
+
+
 @app.post("/api/v1/tasks/create", tags=["TaskController"], response_model=CreateTaskResponse)
 async def create_task(task: Task):
     global taskId
@@ -52,14 +57,15 @@ async def create_task(task: Task):
     return {"status": "Success", "message": "Task created successfully!", "task": new_task}
 
 
-@app.delete("/api/v1/tasks/delete", tags=["TaskController"], response_model=Task)
-async def delete_task(task: Task):
-    model = {"description": task.description, "status": task.status}
-    if model in tasks:
-        tasks.remove(model)
+@app.delete("/api/v1/tasks/deleteTask", tags=["TaskController"], response_model=DeleteTaskResponse)
+async def delete_task(task_id: int):
+    if(any(task["id"] == task_id for task in tasks)):
+        for i in tasks:
+            if(i["id"] == task_id):
+                tasks.pop(task_id)
+        return {"status": "Success", "message": "Task deleted successfully!"}
     else:
-        raise HTTPException(status_code=404, detail="Item not found")
-    return task
+        raise HTTPException(status_code=404, detail="Task id not found")
 
 
 @app.patch("/api/v1/tasks/updateTaskDescription", tags=["TaskController"], response_model=UpdateTaskDescriptionResponse)
