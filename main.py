@@ -54,11 +54,26 @@ class ListTasksResponse(BaseModel):
 
 
 @app.get("/api/v1/tasks/listTasks", tags=["TaskController"], response_model=ListTasksResponse)
-async def list_tasks():
-    return {"tasks": tasks}
+async def list_tasks(status: str = "all"):
+    """
+    List tasks by status. 
+    Supported values for the status parameter: 
+
+    - **all**
+    - **started**
+    - **finished**
+    """
+    if(status == "all"):
+        return {"tasks": tasks}
+    elif(status == "started"):
+        return {"tasks": [task for task in tasks if task["status"] == "started"]}
+    elif(status == "finished"):
+        return {"tasks": [task for task in tasks if task["status"] == "finished"]}
+    else:
+         raise HTTPException(status_code=400, detail="Invalid status")
 
 
-@app.post("/api/v1/tasks/create", tags=["TaskController"], response_model=CreateTaskResponse)
+@app.post("/api/v1/tasks/createTask", tags=["TaskController"], response_model=CreateTaskResponse)
 async def create_task(task: CreateTaskModel):
     global taskId
     new_task = dict()
