@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from typing import List
 from pydantic import BaseModel
 
 tags_metadata = [
@@ -20,9 +21,12 @@ taskId = 3
 
 
 class Task(BaseModel):
+    id: int
     description: str
     status: str
-
+class CreateTaskModel(BaseModel):
+    description: str
+    status: str
 
 class CreateTaskResponse(BaseModel):
     status: str
@@ -46,18 +50,16 @@ class DeleteTaskResponse(BaseModel):
 
 
 class ListTasksResponse(BaseModel):
-    status: str
-    message: str
-    tasks: list
+    tasks: List[Task]
 
 
-@app.get("/api/v1/tasks/", tags=["TaskController"], response_model=ListTasksResponse)
+@app.get("/api/v1/tasks/listTasks", tags=["TaskController"], response_model=ListTasksResponse)
 async def list_tasks():
-    return {"status": "Success", "message": "Tasks listed successfully!", "tasks": tasks}
+    return {"tasks": tasks}
 
 
 @app.post("/api/v1/tasks/create", tags=["TaskController"], response_model=CreateTaskResponse)
-async def create_task(task: Task):
+async def create_task(task: CreateTaskModel):
     global taskId
     new_task = dict()
     new_task["id"] = taskId
